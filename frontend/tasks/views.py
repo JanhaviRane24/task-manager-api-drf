@@ -85,4 +85,14 @@ def update_task(request, task_id):
     )
 
 def delete_task(request, task_id):
-    pass
+
+    if request.method == "POST":
+
+        response = requests.delete(
+            f"http://127.0.0.1:8000/api/delete/{task_id}/"
+        )
+
+        if response.status_code == 204:
+            return redirect("dashboard")
+
+    return redirect("dashboard")
