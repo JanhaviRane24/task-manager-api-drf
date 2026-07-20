@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+
+<div class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+
+<div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-8 space-y-6">
+
+
+<h1 class="text-3xl font-bold text-center mb-8">
+    Add Task
+</h1>
+
+
+<form method="POST">
+
+{% csrf_token %}
+
+
+<div class="space-y-5">
+
+
+<div>
+
+<label class="font-semibold">
+Title
+</label>
+
+<input
+type="text"
+name="title"
+required
+class="w-full mt-2 border rounded-lg px-4 py-2">
+
+</div>
+
+
+
+<div>
+
+<label class="font-semibold">
+Description
+</label>
+
+
+<textarea
+name="description"
+rows="4"
+class="w-full mt-2 border rounded-lg px-4 py-2"></textarea>
+
+
+</div>
+
+
+
+<div>
+
+<label class="font-semibold">
+Status
+</label>
+
+
+<select
+name="status"
+class="w-full mt-2 border rounded-lg px-4 py-2">
+
+
+<option value="pending">
+Pending
+</option>
+
+
+<option value="in_progress">
+In Progress
+</option>
+
+
+<option value="completed">
+Completed
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+<div>
+
+<label class="font-semibold">
+Priority
+</label>
+
+
+<select
+name="priority"
+class="w-full mt-2 border rounded-lg px-4 py-2">
+
+
+<option value="low">
+Low
+</option>
+
+
+<option value="medium">
+Medium
+</option>
+
+
+<option value="high">
+High
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+<div>
+
+<label class="font-semibold">
+Due Date
+</label>
+
+
+<input
+type="date"
+name="due_date"
+required
+class="w-full mt-2 border rounded-lg px-4 py-2">
+
+
+</div>
+
+
+
+
+<button
+
+class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700">
+
+Add Task
+
+</button>
+
+
+
+<a href="{% url 'dashboard' %}"
+
+class="block text-center mt-3 bg-gray-200 py-3 rounded-lg">
+
+Cancel
+
+</a>
+
+
+
+</div>
+
+
+</form>
+
+
+</div>
+</div>
+
+{% endblock %}

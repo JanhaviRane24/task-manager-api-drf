@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+
+    <!-- Profile Header -->
+
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8 flex justify-between items-center">
+
+
+        <div>
+
+            <h1 class="text-3xl font-bold text-gray-800">
+                Welcome, {{ request.user.username }}
+            </h1>
+
+            <p class="text-gray-500 mt-2">
+                Manage your tasks easily
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'logout' %}"
+        class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">
+
+            Logout
+
+        </a>
+        
+
+
+    </div>
+
+
+
+    <!-- Task Heading -->
+
+
+    <div class="flex justify-between items-center mb-8">
+
+
+        <h2 class="text-3xl font-bold text-gray-800">
+            My Tasks
+        </h2>
+
+
+        <a href="{% url 'add_task' %}"
+        class="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700">
+
+            + Add Task
+
+        </a>
+
+
+    </div>
+
+
+
+
+    <!-- TASK GRID -->
+
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+
+
+        {% for t in tasks %}
+
+
+
+        <!-- CARD -->
+
+
+        <div class="bg-white rounded-2xl shadow-lg border-l-4 border-indigo-500 p-6 hover:shadow-xl transition">
+
+
+            <!-- Title + Buttons -->
+
+
+            <div class="flex justify-between items-start">
+
+
+                <h3 class="text-xl font-bold text-gray-800">
+
+                    {{t.title}}
+
+                </h3>
+
+
+
+                <div class="flex gap-3">
+
+
+
+                    <!-- EDIT ICON -->
+
+
+                    <a href="{% url 'edit_task' t.id %}"
+
+                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200">
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+
+
+                        <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+
+
+                        </svg>
+
+
+                    </a>
+
+
+
+
+                    <!-- DELETE ICON -->
+
+
+                    <form method="POST" action="{% url 'delete_task' t.id %}">
+
+                        {% csrf_token %}
+
+
+                        <button type="submit"
+
+                        class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200">
+
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                            class="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+
+
+                            <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7H5m10 4v6m-6-6v6m1-13V4a1 1 0 011-1h2a1 1 0 011 1v3"/>
+
+
+                            </svg>
+
+
+                        </button>
+
+
+                    </form>
+
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <!-- Priority + Status -->
+
+
+            <div class="flex justify-between mt-6">
+
+
+
+                <div>
+
+                    <p class="text-sm text-gray-500 mb-2">
+                        Priority
+                    </p>
+
+
+                    {% if t.priority == "high" %}
+
+                    <span class="bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        ↑ High
+
+                    </span>
+
+
+                    {% elif t.priority == "medium" %}
+
+
+                    <span class="bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        − Medium
+
+                    </span>
+
+
+                    {% else %}
+
+
+                    <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        ↓ Low
+
+                    </span>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+
+                <div>
+
+
+                    <p class="text-sm text-gray-500 mb-2">
+
+                        Status
+
+                    </p>
+
+
+
+                    {% if t.status == "completed" %}
+
+
+                    <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        ✓ Completed
+
+                    </span>
+
+
+
+                    {% elif t.status == "in_progress" %}
+
+
+
+                    <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        ● Progress
+
+                    </span>
+
+
+
+                    {% else %}
+
+
+
+                    <span class="bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
+
+                        ● Pending
+
+                    </span>
+
+
+
+                    {% endif %}
+
+
+
+                </div>
+
+
+
+            </div>
+
+
+
+
+
+            <hr class="my-5">
+
+
+
+
+
+          <!-- Due Date -->
+
+<div class="flex items-center text-gray-600 mt-6">
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="h-5 w-5 mr-2"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor">
+
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+
+    </svg>
+
+
+    <span class="font-medium">Due Date:
+        {{ t.due_date|date:"d M Y" }}
+    </span>
+
+
+</div>
+
+
+        </div>
+
+
+
+        {% empty %}
+
+
+
+
+        <div class="col-span-full bg-white rounded-xl shadow p-10 text-center">
+
+
+            <p class="text-gray-500 text-lg">
+
+                No tasks available.
+
+            </p>
+
+
+        </div>
+
+
+
+
+        {% endfor %}
+
+
+
+
+
+    </div>
+
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+function showDetails(id){
+
+
+    let details=document.getElementById("details-"+id);
+
+
+    details.classList.toggle("hidden");
+
+
+}
+
+
+</script>
+
+
+
+{% endblock %}
