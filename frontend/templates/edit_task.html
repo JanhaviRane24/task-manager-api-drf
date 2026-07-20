@@ -15,7 +15,7 @@ Register
         </h1>
 
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <form method="POST" action="{% url 'edit_task' task.id %}">
+            <form method="POST" action="{% url 'update_task' task.id %}">
                 {% csrf_token %}
 
                 <div class="h-2 bg-indigo-500"></div>

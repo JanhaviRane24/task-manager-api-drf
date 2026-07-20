@@ -41,8 +41,48 @@ def add_task(request):
 
     return render(request, "add_task.html")
 
-def edit_task(request, task_id):
-    pass
+def update_task(request, task_id):
+
+    if request.method == "POST":
+
+        data = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "status": request.POST.get("status"),
+            "priority": request.POST.get("priority"),
+            "due_date": request.POST.get("due_date"),
+        }
+
+        response = requests.put(
+            f"http://127.0.0.1:8000/api/update/{task_id}/",
+            data=data
+        )
+
+        if response.status_code == 200:
+            return redirect("dashboard")
+
+
+    response = requests.get(
+        "http://127.0.0.1:8000/api/"
+    )
+
+    tasks = response.json()
+
+    task = None
+
+    for t in tasks:
+        if t["id"] == task_id:
+            task = t
+            break
+
+
+    return render(
+        request,
+        "edit_task.html",
+        {
+            "task": task
+        }
+    )
 
 def delete_task(request, task_id):
     pass
