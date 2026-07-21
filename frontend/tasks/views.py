@@ -3,13 +3,31 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 def dashboard(request):
-    response = requests.get("http://127.0.0.1:8000/api/")
+
+    if "access" not in request.session:
+        return redirect("login")
+
+    headers = {
+        "Authorization": f"Bearer {request.session['access']}"
+    }
+
+    response = requests.get(
+        "http://127.0.0.1:8000/api/",
+        headers=headers
+    )
 
     if response.status_code == 200:
         tasks = response.json()
     else:
         tasks = []
-    return render(request, "dashboard.html", {"tasks": tasks})
+
+    return render(
+        request,
+        "dashboard.html",
+        {
+            "tasks": tasks
+        }
+    )
 
 def register_view(request):
 
@@ -27,21 +45,60 @@ def register_view(request):
         )
 
         print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
+        print("DATA:", response.text)
 
         if response.status_code == 201:
-            messages.success(request, "Registration successful.")
+            messages.success(
+                request,
+                "Registration successful."
+            )
             return redirect("login")
 
         messages.error(
             request,
-            "Registration failed."
+            response.text
         )
 
     return render(request, "register.html")
 
 def login_view(request):
-    pass
+
+    if request.method == "POST":
+
+        data = {
+            "username": request.POST.get("username"),
+            "password": request.POST.get("password"),
+        }
+
+        response = requests.post(
+            "http://127.0.0.1:8000/api/login/",
+            json=data
+        )
+
+        print(response.status_code)
+        print(response.text)
+
+        if response.status_code == 200:
+
+            tokens = response.json()
+
+            request.session["access"] = tokens["access"]
+            request.session["refresh"] = tokens["refresh"]
+
+            messages.success(
+                request,
+                "Login successful"
+            )
+
+            return redirect("dashboard")
+
+        else:
+            messages.error(
+                request,
+                "Invalid username or password"
+            )
+
+    return render(request, "login.html")
 
 
 
