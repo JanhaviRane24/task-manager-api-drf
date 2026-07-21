@@ -11,10 +11,39 @@ def dashboard(request):
         tasks = []
     return render(request, "dashboard.html", {"tasks": tasks})
 
+def register_view(request):
+
+    if request.method == "POST":
+
+        data = {
+            "username": request.POST.get("username"),
+            "email": request.POST.get("email"),
+            "password": request.POST.get("password"),
+        }
+
+        response = requests.post(
+            "http://127.0.0.1:8000/api/register/",
+            json=data
+        )
+
+        print("STATUS:", response.status_code)
+        print("RESPONSE:", response.text)
+
+        if response.status_code == 201:
+            messages.success(request, "Registration successful.")
+            return redirect("login")
+
+        messages.error(
+            request,
+            "Registration failed."
+        )
+
+    return render(request, "register.html")
+
 def login_view(request):
     pass
-def register_view(request):
-    pass
+
+
 
 def logout_view(request):
     pass
