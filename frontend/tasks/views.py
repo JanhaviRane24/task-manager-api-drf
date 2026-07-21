@@ -1,5 +1,6 @@
 import requests
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 def dashboard(request):
     response = requests.get("http://127.0.0.1:8000/api/")
@@ -38,7 +39,7 @@ def add_task(request):
         if response.status_code == 201:
             return redirect("dashboard")
 
-
+    
     return render(request, "add_task.html")
 
 def update_task(request, task_id):
