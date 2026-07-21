@@ -12,10 +12,14 @@ from rest_framework.permissions import AllowAny
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_tasks(request):
+    print("User:", request.user)
+    print("Authenticated:", request.user.is_authenticated)
+    print("Authorization:", request.META.get("HTTP_AUTHORIZATION"))
 
     if request.method == "GET":
 
-        tasks = Task.objects.all()
+        tasks = Task.objects.filter(user=request.user)
+
 
         serializer = TaskSerializer(
             tasks,
@@ -26,61 +30,48 @@ def get_tasks(request):
 
 
     elif request.method == "POST":
+        serializer = TaskSerializer(data=request.data)
 
-        serializer = TaskSerializer(
-            data=request.data
-        )
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=201)
 
-        if serializer.is_valid():
+    print(serializer.errors)  # Add this
+    return Response(serializer.errors, status=400)
 
-            serializer.save()
-
-            return Response(
-                serializer.data,
-                status=201
-            )
-
-        return Response(
-            serializer.errors,
-            status=400
-        )
-    
-@api_view(['PUT'])
+@api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_task(request, id):
 
     task = get_object_or_404(
         Task,
-        id=id
+        id=id,
+        user=request.user
     )
 
     serializer = TaskSerializer(
         task,
-        data=request.data
+        data=request.data,
+        partial=True
     )
 
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
 
-    return Response(
-        serializer.errors,
-        status=400
-    )
+        return Response(serializer.data, status=200)
+
+    return Response(serializer.errors, status=400)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_task(request, id):
 
-    task = get_object_or_404(
-        Task,
-        id=id
-    )
+    task = get_object_or_404(Task,id=id,user=request.user)
+
 
     task.delete()
 
     return Response(
-        {"message": "Task deleted successfully"},
         status=204
     )
 
@@ -93,7 +84,7 @@ def register(request):
     if serializer.is_valid():
         serializer.save()
         return Response(
-            {"message": "User registered successfully"},
+            
             status=201
         )
 
