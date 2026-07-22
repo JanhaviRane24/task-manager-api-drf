@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Task
-from django.contrib.auth.models import User
+from .models import Task,CustomUser
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -13,12 +12,14 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
-        return User.objects.create_user(
+        user = CustomUser(
             username=validated_data['username'],
             email=validated_data['email'],
-            password=validated_data['password']
         )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

@@ -1,13 +1,33 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from .models import Task
+from .models import Task, CustomUser
 from .serializers import TaskSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login_view(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    try:
+        user = CustomUser.objects.get(username=username)
+    except CustomUser.DoesNotExist:
+        return Response({"detail": "Invalid credentials"}, status=401)
+
+    if not user.check_password(password):
+        return Response({"detail": "Invalid credentials"}, status=401)
+
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+    })
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])

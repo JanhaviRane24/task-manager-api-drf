@@ -1,6 +1,20 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
+class CustomUser(models.Model):
+    username = models.CharField(max_length=150, unique=True)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+
+    def __str__(self):
+        return self.username
+    
 PRIORITY_CHOICES = [
     ('low', 'Low'),
     ('medium', 'Medium'),
@@ -17,11 +31,11 @@ STATUS_CHOICES = [
 class Task(models.Model):
 
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
+    CustomUser,
+    on_delete=models.CASCADE,
+    null=True,
+    blank=True
+)
 
     title = models.CharField(max_length=200)
 
