@@ -25,7 +25,8 @@ def refresh_access_token(request):
         return new_access
 
     return None
-
+def home(request):
+    return redirect("login")
 
 def api_request(request, method, url, **kwargs):
     headers = kwargs.pop("headers", {})
@@ -201,7 +202,6 @@ def logout_view(request):
 
 def add_task(request):
 
-    print(request.session.get("access"))
     if "access" not in request.session:
 
         return redirect("login")

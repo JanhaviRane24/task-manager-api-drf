@@ -12,9 +12,6 @@ from rest_framework.permissions import AllowAny
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def get_tasks(request):
-    print("User:", request.user)
-    print("Authenticated:", request.user.is_authenticated)
-    print("Authorization:", request.META.get("HTTP_AUTHORIZATION"))
 
     if request.method == "GET":
 
@@ -36,7 +33,6 @@ def get_tasks(request):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
 
-    print(serializer.errors)  # Add this
     return Response(serializer.errors, status=400)
 
 @api_view(["PUT"])
